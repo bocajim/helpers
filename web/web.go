@@ -1,6 +1,6 @@
 package web 
 
-import "helpers/log"
+import "github.com/bocajim/helpers/log"
 import "net/http"
 import "github.com/gorilla/mux"
 
