@@ -1,0 +1,72 @@
+package helpers
+
+import (
+)
+
+type CounterIncrementStruct struct {
+	bucket string
+	value int
+}
+
+type CounterQueryStruct struct {
+	bucket string
+	channel chan int
+}
+
+var counterIncrementChan chan CounterIncrementStruct
+var counterQueryChan chan CounterQueryStruct
+var counterListChan chan chan map[string]int
+
+func CounterInitialize() {
+	
+	counterIncrementChan = make(chan CounterIncrementStruct,0)
+	counterQueryChan = make(chan CounterQueryStruct,100)
+	counterListChan = make(chan chan map[string]int,100)
+	go goCounterWriter()
+}
+
+func goCounterWriter() {
+	var counter map[string]int
+	counter = make(map[string]int)
+	for {
+		select {
+			case ci := <- counterIncrementChan:
+				if len(ci.bucket)==0 { return }
+				counter[ci.bucket]+=ci.value
+				break
+			case cq := <- counterQueryChan:
+				val,found:=counter[cq.bucket]
+				if found {
+					cq.channel <- val
+				} else {
+					cq.channel <- -1	
+				}
+				break
+			case cl := <- counterListChan:
+				nm := make(map[string]int)
+				for k, v := range counter {
+				    nm[k] = v
+				}
+				cl <- nm
+				break
+		}
+	}
+}
+
+func CounterIncrement(bucket string, counter int) {
+	if len(bucket)==0 || counter==0 { return }
+	counterIncrementChan <- CounterIncrementStruct{bucket,counter}
+}
+
+func CounterQuery(bucket string) int {
+	if len(bucket)==0 { return -1 }
+	reply := make(chan int)
+	counterQueryChan <- CounterQueryStruct{bucket,reply}
+	return <- reply
+}
+
+func CounterList() map[string]int {
+	reply := make(chan map[string]int)
+	counterListChan <- reply
+	return <- reply
+}
