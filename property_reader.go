@@ -4,6 +4,7 @@ import (
 	"os";
 	"io";
 	"bufio";
+	"strconv"
 	"strings"
 )
 
@@ -53,4 +54,28 @@ func LoadPropertyFile(name string, fileName string) (bool,error) {
 	}
 	Properties[name]=properties;
 	return true,nil
+}
+
+func PropertiesGetString(group string, key string, def string, defp *string) string {
+	if v,f:=Properties[group][key];f {
+		return v
+	}
+	if defp==nil {
+		return def
+	} else {
+		return *defp
+	}
+}
+
+func PropertiesGetInt(group string, key string, def int, defp *int) int {
+	if v,f:=Properties[group][key];f {
+		if i,e:=strconv.Atoi(v);e==nil {
+			return i
+		} 
+	}
+	if defp==nil {
+		return def
+	} else {
+		return *defp
+	}
 }
