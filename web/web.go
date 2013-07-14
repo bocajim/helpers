@@ -21,11 +21,9 @@ func Initialize(listenAddress string) {
 	router = mux.NewRouter()
 	router.NotFoundHandler = http.HandlerFunc(notFoundHandler)
 	
-	http.Handle("/", router)
-	
 	go func() {
 		log.Printf(log.Info,"Starting HTTP server on address: [%s]",listenAddress)
-		e:=http.ListenAndServe(listenAddress, nil)
+		e:=http.ListenAndServe(listenAddress, router)
 		if e!=nil {
 			log.Printf(log.Error,"Error starting HTTP server: %s",e.Error())
 		}
