@@ -11,5 +11,5 @@ func VersionGet() string {
 }
 
 func VersionSet(major int, minor int, fixpack int) {
-	version=fmt.Sprintf("%d.%d.%d",major,minor,fixpack)
+	version = fmt.Sprintf("%d.%d.%d", major, minor, fixpack)
 }
