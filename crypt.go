@@ -5,8 +5,8 @@ import (
 	"crypto/cipher"
 	"crypto/rand"
 	"encoding/base64"
-	"fmt"
 	"io"
+	"github.com/bocajim/helpers/log"
 )
 
 func encodeBase64(b []byte) []byte {
@@ -25,14 +25,14 @@ func Encrypt(key, text []byte) []byte {
 	block, err := aes.NewCipher(key)
 	if err != nil {
 		log.Printf(log.Error, "Could not create new cipher using key: " + err.Error())
-		return ""
+		return nil
 	}
 	b := encodeBase64(text)
 	ciphertext := make([]byte, aes.BlockSize+len(b))
 	iv := ciphertext[:aes.BlockSize]
 	if _, err := io.ReadFull(rand.Reader, iv); err != nil {
 		log.Printf(log.Error, "Could not get random string: " + err.Error())
-		return ""
+		return nil
 	}
 	cfb := cipher.NewCFBEncrypter(block, iv)
 	cfb.XORKeyStream(ciphertext[aes.BlockSize:], b)
@@ -43,11 +43,11 @@ func Decrypt(key, text []byte) []byte {
 	block, err := aes.NewCipher(key)
 	if err != nil {
 		log.Printf(log.Error, "Could not create new cipher using key: " + err.Error())
-		return ""
+		return nil
 	}
 	if len(text) < aes.BlockSize {
 		log.Printf(log.Error, "Encrypted text was too short for the blocksize used.")
-		return ""
+		return nil
 	}
 	iv := text[:aes.BlockSize]
 	text = text[aes.BlockSize:]
