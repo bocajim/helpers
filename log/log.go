@@ -63,6 +63,12 @@ func SetMaxLevel(level LogLevel) {
 }
 
 func SetMaxLevelString(level string) {
+
+	if len(level) == 0 {
+		maxLevel = Info
+		return
+	}
+
 	switch level[0] {
 	case 'E', 'e':
 		maxLevel = Error
@@ -106,7 +112,7 @@ func Printf(level LogLevel, format string, v ...interface{}) {
 		levelString = "[E] "
 		break
 	case Warn:
-		levelString = "[E] "
+		levelString = "[W] "
 		break
 	case Info:
 		levelString = "[I] "
