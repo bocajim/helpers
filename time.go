@@ -33,7 +33,7 @@ var unitMap = map[string]float64{
 	"s":  float64(time.Second),
 	"m":  float64(time.Minute),
 	"h":  float64(time.Hour),
-	"d":  float64(time.Hour*24),
+	"d":  float64(time.Hour * 24),
 }
 
 // ParseDuration parses a duration string.

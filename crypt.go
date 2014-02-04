@@ -5,8 +5,8 @@ import (
 	"crypto/cipher"
 	"crypto/rand"
 	"encoding/base64"
-	"io"
 	"github.com/bocajim/helpers/log"
+	"io"
 )
 
 func encodeBase64(b []byte) []byte {
@@ -24,14 +24,14 @@ func decodeBase64(b []byte) []byte {
 func Encrypt(key, text []byte) []byte {
 	block, err := aes.NewCipher(key)
 	if err != nil {
-		log.Printf(log.Error, "Could not create new cipher using key: " + err.Error())
+		log.Printf(log.Error, "Could not create new cipher using key: "+err.Error())
 		return nil
 	}
 	b := encodeBase64(text)
 	ciphertext := make([]byte, aes.BlockSize+len(b))
 	iv := ciphertext[:aes.BlockSize]
 	if _, err := io.ReadFull(rand.Reader, iv); err != nil {
-		log.Printf(log.Error, "Could not get random string: " + err.Error())
+		log.Printf(log.Error, "Could not get random string: "+err.Error())
 		return nil
 	}
 	cfb := cipher.NewCFBEncrypter(block, iv)
@@ -42,7 +42,7 @@ func Encrypt(key, text []byte) []byte {
 func Decrypt(key, text []byte) []byte {
 	block, err := aes.NewCipher(key)
 	if err != nil {
-		log.Printf(log.Error, "Could not create new cipher using key: " + err.Error())
+		log.Printf(log.Error, "Could not create new cipher using key: "+err.Error())
 		return nil
 	}
 	if len(text) < aes.BlockSize {
