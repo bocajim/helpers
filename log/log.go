@@ -95,6 +95,14 @@ func IsEnabled(level LogLevel) bool {
 	return true
 }
 
+type LogMessage struct {
+	Level LogLevel   `json:"level"`
+	Ts time.Time     `json:"ts"`
+	Where string     `json:"where"`
+	Msg string       `json:"msg"`
+}
+var OnLogChan chan *LogMessage
+
 func Printf(level LogLevel, format string, v ...interface{}) {
 	if level > maxLevel {
 		return
@@ -124,6 +132,7 @@ func Printf(level LogLevel, format string, v ...interface{}) {
 		levelString = "[T] "
 		break
 	}
+	
 	//golog.Printf(levelString+f.Name()+"(): "+format,v...)
 	if !HideLocation {
 		var where string
@@ -132,6 +141,10 @@ func Printf(level LogLevel, format string, v ...interface{}) {
 		} else {
 			where = f.Name()
 		}
+		
+		if OnLogChan!=nil {
+			OnLogChan <- &LogMessage{ level,time.Now(),where,fmt.Sprintf(format,v...)}
+		}
 
 		if PadLocation && len(where) < 32 {
 			where = fmt.Sprintf("%-32s", where)
@@ -139,6 +152,11 @@ func Printf(level LogLevel, format string, v ...interface{}) {
 
 		golog.Printf(levelString+"["+where+"] "+format, v...)
 	} else {
+	
+		if OnLogChan!=nil {
+			OnLogChan <- &LogMessage{ level,time.Now(),"",fmt.Sprintf(format,v...)}
+		}
+		
 		golog.Printf(levelString+format, v...)
 	}
 }
