@@ -59,7 +59,7 @@ func elapsedTime(start int64) float32 {
     return t
 }*/
 
-func IcmpPing(addr string) (time.Duration, error) {
+func IcmpPing(addr string, timeout time.Duration) (time.Duration, error) {
 
 	raddr, err := net.ResolveIPAddr("ip4", addr) // *IPAddr
 	if err != nil {
@@ -84,14 +84,12 @@ func IcmpPing(addr string) (time.Duration, error) {
 		return 0, err
 	}
 
-	ipconn.SetDeadline(start.Add(time.Second * 5)) // 0.5 second
+	ipconn.SetReadDeadline(start.Add(timeout)) // 0.5 second
 
 	resp := make([]byte, 1024)
 	for {
 		_, _, err := ipconn.ReadFrom(resp)
 		//fmt.Printf("%d bytes from %s: icmp_req=%d time=%.2f ms\n", n, dst, sendseq, elapsedTime(start))
-
-		// log.Printf("%x", resp)
 
 		if err != nil {
 			return 0, err
