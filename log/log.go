@@ -52,7 +52,7 @@ func Configure(fileName string, appendFile bool) error {
 	} else {
 		writer = os.Stdout
 	}
-	golog.SetFlags(golog.Ltime)
+	golog.SetFlags(golog.Ldate|golog.Ltime)
 	golog.SetOutput(writer)
 	maxLevel = Info
 	return nil
