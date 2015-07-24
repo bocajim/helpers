@@ -210,3 +210,28 @@ func rollLogs() {
 		}
 	}
 }
+
+func GetLevelString(level LogLevel) string {
+	levelString := "always"
+	switch level {
+		case Always:
+			levelString = "always"
+			break
+		case Error:
+			levelString = "error"
+			break
+		case Warn:
+			levelString = "warn"
+			break
+		case Info:
+			levelString = "info"
+			break
+		case Debug:
+			levelString = "debuf"
+			break
+		case Trace:
+			levelString = "trace"
+			break
+	}
+	return levelString
+}
